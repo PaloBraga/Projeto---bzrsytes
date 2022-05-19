@@ -1,0 +1,8 @@
+bzrvenv
+.gitignore
+docker-compose.yml
+Dockerfile
+LICENSE
+README.md
+teste.py
+database

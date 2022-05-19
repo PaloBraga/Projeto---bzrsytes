@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  # SERVIÇO DO SERVIDOR WEB
+  web:
+    image: bzr_teste:latest
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - ${BZR_WEB_PORT}:8000
+    environment:
+      BZR_DJANGO_SECRET : "${BZR_DJANGO_SECRET}"
+      BZR_WEB_PORT : "${BZR_WEB_PORT}"
+      BZR_DB_HOST : "${BZR_DB_HOST}"
+      BZR_DB_USER : "${BZR_DB_USER}"
+      BZR_DB_PASSWD : "${BZR_DB_PASSWD}"
+      BZR_DB_NAME : "${BZR_DB_NAME}"
+      BZR_DB_PORT : "${BZR_DB_PORT}"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        reservations:
+          cpus: '0.30'
+          memory: 100M
+        limits:
+          cpus: '0.40'
+          memory: 200M
+
+  # SERVIÇO DE BANCO DE DADOS
+  db:
+    image: postgres:14
+    ports:
+      - ${BZR_DB_PORT}:5432
+    environment:
+        TZ : "America/Sao_Paulo"
+        POSTGRES_USER : "${BZR_DB_USER}"
+        POSTGRES_PASSWORD : "${BZR_DB_PASSWD}"
+        POSTGRES_DB : "${BZR_DB_NAME}"
+    volumes:
+      - ./database/pgdata:/var/lib/postgresql/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      resources:
+        reservations:
+          cpus: '0.30'
+          memory: 100M
+        limits:
+          cpus: '0.40'
+          memory: 200M

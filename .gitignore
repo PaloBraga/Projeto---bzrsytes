@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# EXCLUSÕES DO PROJETO
+teste.py
+bzrvenv
+pgdata
